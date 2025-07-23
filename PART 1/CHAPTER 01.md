@@ -55,5 +55,29 @@ def hello():
   return "Hello, World!"
 ```
 /hello로 접속해보기
+```
+$flask routes # 이 코드를 이용하여 라우팅 정보를 확인할 수 있음
+```
+### 엔드포인트에 이름 붙이기
+URI와 연결된 함수명 
+```
+@app.route("/", endpoint="endpoint-name")
+```
+### 허가할 HTTP 메서드 지정하기
+```
+@app.route("/hello", methods=["GET", "POST"])
+```
+```
+@app.get("/hello")
+@app.post("/hello")
+  return "Hello, World!"
+```
+동일한 코드
 
-$flask routes 를 이용하여 라우팅 정보를 확인할 수 있음
+### Rule에 변수 지정
+```
+@app.route("/hello/<name>")
+def hello(name):
+  return f"Hello, {name}!"
+```
+/hello/xxx로 접속
