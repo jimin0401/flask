@@ -27,4 +27,24 @@ py -m venv venv
 ```
 deactivate
 ```
-### 2. 아나콘
+### 2. 아나콘다
+1. 다운로드
+[링크](https://www.anaconda.com/download/success)
+2. 가상 환경 생성(Anaconda Prompt)
+```
+conda create -n myenv python=3.10
+```
+3. 가상 환경 활성화
+```
+conda activate myenv
+```
+4. conda deactivate
+
+## 플라스크 설치하기
+```
+mkdir flask
+cd flask
+venv\Scripts\Activate.ps1
+pip install flask //anaconda사용시 conda install flask
+```
+
