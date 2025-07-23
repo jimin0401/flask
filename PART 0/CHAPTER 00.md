@@ -2,6 +2,6 @@
 <br></br>
 
 ## 파이썬 설치하기
-[링크](www.python.org/downloads)
+[링크](https://www.python.org/downloads/)
 
 ##
