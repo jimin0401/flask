@@ -4,4 +4,6 @@
 ## 파이썬 설치하기
 [링크](https://www.python.org/downloads/)
 
-##
+## 가상 환경 만들기
+### 1. 로컬 환경
+
