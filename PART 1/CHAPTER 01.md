@@ -81,3 +81,12 @@ def hello(name):
   return f"Hello, {name}!"
 ```
 /hello/xxx로 접속
+
+<자료형: 변수명>으로 타입 정의 가능
+
+## 템플릿 엔진 이용하기
+reder_template 함수를 사용하여 템플릿을 이용
+
+minimalapp에 templates폴더 생성 후 index.html생성
+```
+# index.html
