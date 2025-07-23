@@ -28,12 +28,32 @@ def index():
 ```
 cd apps/minimalapp
 $env:FLASK_APP="app.py"
-$env:FLASK_ENV="development"
+$env:FLASK_ENV="development" # $env:FLASK_DEBUG="1" 디버그 모드 안될시 사용, 디버그모드 사용시 코드 수정 후 재시작할 필요 없음
 ```
 <br></br>
 ```
 # 환경 변수 설정 없이 실행
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0' port=5000 debug=True)
 ```
+## .env활용
+.env파일 생성후
+```
+FLASK_APP=app.py
+FLASK_ENV=production
+```
+```
+pip install python-dotenv
+```
+
 4. flask run 명령어 실행
+
+## 라우팅 활용하기
+```
+@app.route("/hello")
+def hello():
+  return "Hello, World!"
+```
+/hello로 접속해보기
+
+$flask routes 를 이용하여 라우팅 정보를 확인할 수 있음
