@@ -20,9 +20,20 @@ from flask import Flask
 app = Flask(__name__)
 
 # URL과 실행할 함수를 매핑
-@app.rout("/")
+@app.route("/")
 def index():
   return "Hello, flask"
 ```
 3. 환경 변수 설정
+```
+cd apps/minimalapp
+$env:FLASK_APP="app.py"
+$env:FLASK_ENV="development"
+```
+<br></br>
+```
+# 환경 변수 설정 없이 실행
+if __name__ == "__main__":
+    app.run(debug=True)
+```
 4. flask run 명령어 실행
