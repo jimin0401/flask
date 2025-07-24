@@ -89,4 +89,59 @@ reder_template 함수를 사용하여 템플릿을 이용
 
 minimalapp에 templates폴더 생성 후 index.html생성
 ```
-# index.html
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="ko" >
+    <head>
+        <meta charset="UTF-8" />
+        <title>Name</title>
+    </head>
+    <body>
+        <h1>Name: {{ name }}</h1>
+    </body>
+</html>
+```
+```
+# app.py
+@app.route("/name/<name>")
+def show_name(name):
+  return render_template("index.html", name=name)
+```
+### Jinja2의 사용법
+변수 : {{}}
+
+if 문, for 문 : {% %}
+
+## url_for 함수를 사요어해서 URL 생성하기
+flask routes 명령어 사용하여 endpoint를 호출 
+```
+from flask import url_for
+
+### 앱 동작 확인
+with app.test_request_context():
+  print(url_for("index"))
+  print(url_for("hello-endpoint", name="world"))
+  print(url_for("show_name", name="aa", page="1"))
+```
+
+## 정적 파일 이용하기
+minimalapp에 static 폴더 생성 후 style.css 생성
+```
+/* style.css */
+h1 {
+  color: darkblue;
+  font-size: 36px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+```
+<head>안에 삽입
+```
+        <link 
+            rel="stylesheet"
+            href="{{url_for('static', filename= 'style.css')}}"
+        />
+```
