@@ -297,6 +297,7 @@ def contact_complete():
         # 이메일을 보낸다(나중에 구현할 부분)
 
         # 문의 완료 엔드포이트로 리다이렉트한다
+        flash("문의해 주셔서 감사합니다.")
         return redirect(url_for ("contact_complete"))
     return render_template("contact_complete.html")
 ```
@@ -312,5 +313,134 @@ contact.html
     </ul>
     {% endif %}
     {% endwith %}
+```
+contact_complete.html
+```
+        <h2>문의 완료</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %} 
+        <ul>
+            {% for message in messages %} 
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+```
+
+## 이메일 보내기
+```
+pip install flask-mail
+```
+[Gmail 2단계 인증 프로세스](https://myaccount.google.com/signinoptions/two-step-verification/enroll-welcome)
+[앱용 비밀번호](https://myaccount.google.com/apppasswords)
+```
+from flask_mail import Mail
+import os
+
+# Mail 클래스의 config
+app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
+app.config["MAIL_PORT"] = os.environ.get("MAIL_PORT")
+app.config["MAIL_USE_TSL"] = os.environ.get("MAIL_USE_TSL")
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
+
+#flask-mail 확장 등록
+mail = Mail(app)
+```
+.env 설정
+```
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TSL=True
+MAIL_USERNAME=이메일 주소
+MAIL_PASSWORD=앱용 비밀번호
+MAIL_DEFAULT_SENDER=비밀번호 이름 이메일 주소
+```
+
+### 이메일 보내기
+```
+from flask_mail import Mail, Message
+
+@app. route("/contact/complete", methods=["GET", "POST"])
+def contact_complete():
+    if request.method == "POST" :
+    # from값 취득
+        username = request.form["username"]
+        email = request.form["email"]
+        description = request.form["description"]
+
+        is_valid = True
+        
+        if not username:
+            flash("사용자명은 필수입니다")
+            is_valid = False
+
+        if not email:
+            flash("메일 주소는 필수입니다 ")
+            is_valid = False
+        
+        try:
+            validate_email(email)
+        
+        except EmailNotValidError:
+            flash("메일 주소의 형식으로 입력해 주세요")
+            is_valid = False
+        
+        if not description:
+            flash("문의 내용은 필수입니다")
+            is_valid = False
+
+        if not is_valid:
+            return redirect(url_for("contact"))
+
+        # 이메일을 보낸다(나중에 구현할 부분)
+        send_email(
+           email,
+           "문의 감사합니다.",
+           "contact_mail",
+           username=username,
+           description=description
+        )
+        
+        # 문의 완료 엔드포이트로 리다이렉트한다
+        flash("문의해 주셔서 감사합니다.")
+        return redirect(url_for ("contact_complete"))
+    return render_template("contact_complete.html")
+
+def send_email(to, subject, template, **kwargs):
+   msg = Message(subject, recipients=[to])
+   msg.body = render_template(template + ".txt", **kwargs)
+   msg.html = render_template(template + ".html", **kwargs)
+   mail.send(msg)
+```
+### 이메일 템플릿
+contact_mail.txt
+```
+{{username}}씨
+
+문의 감사합니다. 문의 내용은 다음과 같습니다.
+
+문의 내용
+
+{{ description }}
+```
+contact_mail.html
+```
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8" />
+    <title>문의 완료 </title>
+    </head>
+    
+    <body>
+        <p>{{ username }} M</p>
+        <p>문의 감사합니다. 문의 내용은 다음과 같습니다. </p> 
+        <p>문의 내용</p>
+        <p>{{ description }}</p>
+    </body>
+</html>
 ```
 
