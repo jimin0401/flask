@@ -138,10 +138,112 @@ h1 {
   padding-bottom: 10px;
 }
 ```
-head안에 삽입
+index.html의 head안에 삽입
 ```
         <link 
             rel="stylesheet"
             href="{{url_for('static', filename= 'style.css')}}"
         />
+```
+
+## 애플리케이션 컨텍스트와 요청 컨텍스트
+### 애플리케이션 컨텍스트
+요청을 통해 앱 레벨의 데이터를 이용할 수 있도록 하는 것
+- current_app : 액티브 앱(실행 중의 앱)의 인스턴스
+- g : 요청을 통해 이용할 수 있는 전역 임시 영역. 요청마다 리셋
+
+
+# 1.3 문의 폼 만들기
+```
+@app. route("/contact/complete", methods=["GET", "POST"])
+def contact_complete():
+    if request.method == "POST" :
+    # 이메일을 보낸다(나중에 구현할 부분)
+    
+    # contact 엔드포인트로 리다이렉트한다
+        return redirect(url_for ("contact_complete"))
+    return render_template("contact_complete.html")
+```
+contact.html
+```
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>문의 폼</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+    <h2>문의 폼</h2>
+    <form
+        action="{f url_for('contact_complete') }}"
+        method="POST" 
+        novalidate="novalidate"
+    >
+    <table>
+        <tr>
+            <td>사용자명</td>
+            <td>
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ username }}"
+                    placeholder="사용자명"
+                />
+            </td>
+        </tr>
+        <tr>
+            <td>메일 주소</td>        
+            <td>
+                <input
+                    type="text"
+                    name="email"
+                    value="{{ email }}"
+                    placeholder="메일 주소"
+                />
+            </td>
+        </tr>
+        <tr>
+            <td>문의 내용</td>
+            <td>
+                <textarea name="description" placeholder="문의 내용"> {{ description }}</textarea>
+            </td>
+        </tr>
+        </table>
+        <input type="submit" value="문의" />
+    </form>
+</body> 
+</html>
+```
+contact_complete.html
+```
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8" />
+    <title>문의 완료</title>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    />
+    </head>
+    <body>
+        <h2>문의 완료</h2>
+    </body>
+</html>
+```
+### POST된 폼의 값 얻기
+```
+@app. route("/contact/complete", methods=["GET", "POST"])
+def contact_complete():
+    if request.method == "POST" :
+    # from값 취득
+        username = request.form["username"]
+        email = request.form["email"]
+        description = request.form["description"]
+        
+    # contact 엔드포인트로 리다이렉트한다
+        return redirect(url_for ("contact_complete"))
+    return render_template("contact_complete.html")
 ```
