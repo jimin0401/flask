@@ -353,10 +353,10 @@ mail = Mail(app)
 ```
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USE_TSL=True
-MAIL_USERNAME=이메일 주소
-MAIL_PASSWORD=앱용 비밀번호
-MAIL_DEFAULT_SENDER=비밀번호 이름 이메일 주소
+MAIL_USE_TLS=True
+MAIL_USERNAME=schch0401@gmail.com
+MAIL_PASSWORD=dctj acve jlbg cyji
+MAIL_DEFAULT_SENDER=flask schch0401@gmail.com
 ```
 
 ### 이메일 보내기
@@ -436,7 +436,7 @@ contact_mail.html
     </head>
     
     <body>
-        <p>{{ username }} M</p>
+        <p>{{ username }}</p>
         <p>문의 감사합니다. 문의 내용은 다음과 같습니다. </p> 
         <p>문의 내용</p>
         <p>{{ description }}</p>
