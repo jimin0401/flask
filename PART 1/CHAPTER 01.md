@@ -333,6 +333,7 @@ contact_complete.html
 pip install flask-mail
 ```
 [Gmail 2단계 인증 프로세스](https://myaccount.google.com/signinoptions/two-step-verification/enroll-welcome)
+
 [앱용 비밀번호](https://myaccount.google.com/apppasswords)
 ```
 from flask_mail import Mail
