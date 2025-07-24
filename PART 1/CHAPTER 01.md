@@ -138,7 +138,7 @@ h1 {
   padding-bottom: 10px;
 }
 ```
-<head>안에 삽입
+head안에 삽입
 ```
         <link 
             rel="stylesheet"
