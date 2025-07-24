@@ -177,7 +177,7 @@ contact.html
 <body>
     <h2>문의 폼</h2>
     <form
-        action="{f url_for('contact_complete') }}"
+        action="{{url_for('contact_complete') }}"
         method="POST" 
         novalidate="novalidate"
     >
@@ -247,3 +247,5 @@ def contact_complete():
         return redirect(url_for ("contact_complete"))
     return render_template("contact_complete.html")
 ```
+
+## flash 메시지
