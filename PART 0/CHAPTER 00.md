@@ -44,7 +44,9 @@ conda activate myenv
 ```
 mkdir flask
 cd flask
-venv\Scripts\Activate.ps1
+PowerShell Set-ExecutionPolicy RemoteSigned CurrentUser
+py -m venv venv
+.\venv\Scripts\Activate.ps1
 pip install flask //anaconda사용시 conda install flask
 ```
 
