@@ -264,3 +264,21 @@ paginate(page=None, per_page=None, error_out=Ture, max_per_page=None)
 ```
 db.session.query(User).paginate(2, 10, False)
 ```
+### query filter를 사용하여 SELECT하기
+- where 구(filter_by)
+id가 2이고 username이 admin인 레코드 가져오기
+```
+db.session.query(User).filter_by(id=2, username="admin").all
+```
+- where 구(filter)
+id가 2이고 username이 admin인 레코드 가져오기
+```
+db.session.query(User).filter(User.id==2, User.username=="admin").all()
+```
+- limit 구
+```
+db.session.query(User).limit(1).all()
+```
+- offset 구
+```
+db.session.query(User).limit(1).offset(1).all()
