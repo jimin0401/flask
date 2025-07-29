@@ -266,19 +266,321 @@ db.session.query(User).paginate(2, 10, False)
 ```
 ### query filter를 사용하여 SELECT하기
 - where 구(filter_by)
+
 id가 2이고 username이 admin인 레코드 가져오기
 ```
 db.session.query(User).filter_by(id=2, username="admin").all
 ```
 - where 구(filter)
+
 id가 2이고 username이 admin인 레코드 가져오기
 ```
 db.session.query(User).filter(User.id==2, User.username=="admin").all()
 ```
 - limit 구
+
+가져올 레코드의 개수를 1건으로 지정하기
 ```
 db.session.query(User).limit(1).all()
 ```
 - offset 구
+
+3번째의 레코드로부터 1건 가져오기
 ```
 db.session.query(User).limit(1).offset(1).all()
+```
+- order by 구
+
+username을 정렬
+```
+db.session.query(User).order_by("username").all()
+```
+- group by 구
+
+username을 그룹화
+```
+db.session.query(User).group_by("username").all()
+```
+###  ISERT하기
+```
+# 사용자 모델 객체를 작성한다
+user = User
+    username="사용자명",
+    email="flaskbook@example.com"
+    password="비밀번호"
+)
+# 사용자를 추가한다.
+db.session.add(user)
+# 커밋한다
+db.session.commit()
+```
+### UPDATE 하기
+```
+user = db .session.query(User). filter_by(id=1). first()
+user.username = "사용자명2"
+user. email = "flaskbook2@example.com"
+user.password = "비밀번호2"
+db. session. add (user)
+db. session.commit()
+```
+### DELETE 하기
+```
+user = db. session. query (User). filter_by (id=1) .delete()
+db. session. commit()
+```
+# 2.5 데이터베이스를 사용한 CRUD앱 만들기
+## 폼의 확장 기능 이용하기
+```
+pip install flask-wtf
+```
+CSRF대책을 위한 설정 추가하기(apps/app.py)
+```
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
+
+def create_app():
+    app = Flask(__name_)
+    app. config. from_mapping(
+        WTF_CSRF_SECRET_KEY="AuwzyszU5sugKN7KZs6f",
+    )
+csrf.init_app(app)
+```
+## tkdydwkfmf tlsrb wkrtjdgkrl
+apps/crud/forms.py
+```
+from flask_wtf import FlaskForm
+from wtforms import PasswordField, StringField, SubmitField
+from wtforms.validators import DataRequired, Email, Length
+
+# 사용자 신규 작성과 사용자 편집 폼 클래스
+class UserForm(FlaskForm) :
+    # 사용자 폼의 username 속성의 라벨과 검증을 설정한다
+    username = StringField
+        "사용자명"
+        validators=[
+            DataRequired(message="사용자명은 필수입니다. "),
+            Length(max=30, message="38문자 이내로 입력해 주세요. "),
+        },
+    )
+
+    # 사용자폼 email 속성의 라벨과 검증을 설정한다
+    email = StringField(
+        "메일 주소",
+        validators=[
+            DataRequired(message="메일주소는 필수입니다. "),
+            Email(message="메일 주소의 형식으로 입력해 주세요. "),
+        ],
+    )
+
+    # 사용자 폼 password 속성의 라벨과 검증을 설정한다
+    password = PasswordField(
+        "비밀번호",
+        validators=[DataRequired(message="비밀번호는 필수입니다. ")]
+    )
+    # 사용자폼 Submit의 문구를 설정한다
+    submit= SubmitFieLd("신규 등록")
+```
+## 사용자 신규 작성 화면의 엔드포인트 만들기
+```
+from apps.crud.forms import UserForm
+from flask import Blueprint, render_template, redirect, url_for
+
+
+@crud. route("/users/new", methods=["GET", "POST"])
+def create_user():
+    # UserForm을 인스턴스화한다
+    form = UserForm()
+    # 폼의 값을 검증한다
+    if form. validate_on_submit):
+        # 사용자를 작성한다
+        user = User (
+            username=form. username. data,
+            email=form. email.data,
+            password=form. password. data,
+        )
+    # 사용자를 추가하고 커밋한다
+    db. session. add (user)
+    db.session. commit()
+    # 사용자의 일람 화면으로 리다이렉트한다
+    return redirect(url_for("crud.users"))
+return render_template("crud/create.html", form=form)
+```
+## 신규 작성 화면의 템플릿 만들기 (apps/crud/templates/crud/create.html)
+```
+<! DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>사용자 신규 작성 </title>
+  </head>
+‹body>
+  <h2> 사용자 신규 작성</h2>
+  <form
+    action="{f url_for ('crud. create_user') }}"
+    method="POST"
+    novalidate="novalidate"
+  >
+      {{form. csrf_token }}
+      <p>
+        {{ form.username. label J} {{ form. username (placeholder="사용자명") }}
+      </p>
+      {% for error in form.username.errors %}
+      <span style="color: red;">{{ error }}</span>
+      {% endfor %}
+      <p>
+        {{form. email. label f} ff form. email (placeholder="메일 주소") }}
+      </p>
+      {% for error in form.email.errors %}
+      <span style="color: red;">{{ error }}</span>
+      {% endfor %}
+      <p>
+        {{ form-password. label }}{{ form-password(placeholder="비밀번호")}}
+      </p>
+      {% for error in form.password.errors %}
+      <span style="color: red;">{{ error }</span>
+      {% endfor %}
+      <p>{{form.submit()}}</p>
+    </form>
+  </body>
+</html>
+```
+## 사용자 일람 표시하기
+### 엔드포인트 만들기(apps/crud/views.py)
+```
+@crud. route("/users")
+def users:
+    """사용자의 일람을 취득한다""
+    users = User query .all)
+    return render_template("crud/index.html", users-users)
+```
+템플릿 index.html
+```
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset= "UTF-8" />
+    <title>사용자의 일람</titLe>
+    <Link rel="stylesheet" href="If url_for('crud static', filename='style.css') }}"/>
+  </head>
+  <body>
+    <h2> 사용자의 일람</h2>
+    <a href="{f url_for('crud.create_user') }}">사용자 신규 작성 </ a2
+    <table>
+      ‹tr›
+        <th>사용자 ID</th>
+        <th>사용자명</th>
+        <th>메일 주소</th>
+      </tr>
+      {% for user in users %}
+      <tr>
+        <td>f user.id }}</td>
+        <td>t user. username }}</td>
+        <td>f user.email }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
+```
+## 스타일 시트 수정하기
+```
+table {
+    /* 인접하는 border를 겹쳐서 1개로 해서 표시한다 */
+    border-collapse: collapse;
+}
+table,
+th,
+td {
+/* 1px의 실선으로 해서 색을 조절한다 */
+    border: 1px solid #c0c0c0;
+```
+## 사용자 편집하기
+views.py
+```
+# methods에 GET과 POST를 지정한다
+@crud.route("/users/<user_id>", methods=["GET", "POST"])
+def edit_user(user_id):
+    form = UserForm)
+
+    # User 모델을 이용하여 사용자를 취득한다
+    user = User.query. filter_by(id=user_id). first()
+
+    # form으로부터 제출된 경우는 사용자를 갱신하여 사용자의 일람 화면으로 리다이렉트한다
+    if form.validate_on_submit():
+        user. username = form.username.data
+        user.email = form.email.data
+        user.password = form.password.data
+        db. session.add(user) db.session.commit()
+    return redirect(url_for("crud.users"))
+
+# GET의 경우는 HTML을 반환한다
+return render_template("crud/edit.html", usereuser, form=form)
+```
+edit.html
+```
+<! DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" /›
+    <title>사용자 편집</title>
+    <link rel="stylesheet" href="[f url_for('crud.static', filename='style.css' )}}" />
+  </head>
+  <body>
+    <h2>사용자 편집</h2>
+    <form
+      action="I url_for ('crud.edit_user', user_id-user.id) }}"
+      method="POST"
+      novalidate="novalidate"
+    >
+    {{ form.csrf_token }}
+    <p>
+      {{ form.username.label y} {{ form.username(placeholder="사용자명"
+      value=user .username) }}
+    </p>
+    {% for error in form.username.errors %}
+    <span style="color: red;"›{{ error }}</span>
+    {% endfor %}
+    <p>
+      {{form. email. label }} {{ form. email (placeholder="메일 주소", value=user.email) }}
+    </p>
+    {% for error in form.email.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>
+      {{ form.password. label th ft form.password(placeholder="비밀번호") }}
+    </p>
+    {% for error in form.password.errors %}
+    ‹span style="color: red;">{ error }}</span>
+    {% endfor %}
+    <p>
+      <input type="submit" value="갱신" />
+    </p›
+    </form>
+  </body>
+</html>
+```
+index.html 수정
+```
+<td>
+<a href="{{ url_for('crud.edit_user', user_id=user.id) }}">{{ user.id}} </a> 추가
+</td>
+```
+## 사용자 삭제하기
+views.py
+```
+@crud. route("/users/<user_id>/delete"', methods=[" POST" ])
+def delete_user(user_id):
+    user=user. query. filter_by(id-user_id). first )
+    db. session. delete(user)
+    db. session. commit ( )
+    return redirect(url_for("crud.users"))
+```
+edit.html
+```
+<form action="{f url_for('crud delete_user', user_id=user.id) }}" method="POST">
+  {{ form. csrf_token }}
+  <input type="submit" value="삭제">
+‹/ form>
+```
+
