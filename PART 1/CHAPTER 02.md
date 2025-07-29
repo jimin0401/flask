@@ -61,7 +61,7 @@ sample = Blueprint(
     "sample",
     static_folder="static",
     template_folder="templates",
-    ur l_prefix="/sample",
+    url_prefix="/sample",
     subdomain="example",
 )
 ```
@@ -164,4 +164,82 @@ def create_app():
 # 2.4 데이터 베이스 조작하기
 
 ## 모델 정의하기
+apps/crud/models.py
+```
+from datetime import datetime
+from apps.app import db
+from werkzeug. security import generate_password_hash
 
+# db. Model을 상속한 User 클래스를 작성한다
+class User (db.Model) :
+    # 테이블명을 지정한다
+    __tablename__ = "users"
+    # 컬럼을 정의한다
+    id = db.Column(db. Integer, primary_key=True)
+    username = db.Column(db.String, index=True)
+    email = db.Column(db.String, unique=True, index=True)
+    password_hash = db.Column (db.String)
+    created_at = db.Column (db.DateTime, default=datetime.now)
+    updated_at = db.Column (
+        db.DateTime, default=datetime.now, onupdate=datetime.now
+    )
+    # 비밀번호를 설정하기 위한 프로퍼티
+    @property
+    def password (self):
+        raise AttributeError("읽어 들일 수 없음")
+    # 비밀번호를 설정하기 위해 Setter 함수로 해시화한 비밀번호를 설정한다
+    @password.setter
+    def password(self, password) :
+        self.password_hash = generate_password_hash(password)
+```
+모델 선언하기(apps/crud/__init__.py)
+```
+import apps.crud.models
+```
+## 데이터베이스 초기화와 마이그레이션 
+```
+flask db init
+```
+```
+flask db migrate
+```
+```
+flask db upgrade
+```
+```
+flask db downgrade
+```
+## SQLAlchemy를 사용한 기본적인 데이터 조작
+SQL 로그 출력하기(apps/app.py)
+```
+def create_app):
+    app = Flask(__name__)
+    # 앱의 config 설정
+    app. config. from_mapping(
+        SECRET_KEY="2AZSMss3p5QPbcY2hBsJ",
+        SQLALCHEMY_DATABASE_URI="sqlite:////"
+        + str (Path(Path(__file__). parent-parent, "local sqlite")),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        #SOL을 콘솔 로그에 출력하는 설정
+        SQLALCHEMY_ECHO=True
+)
+```
+### query filter와 executer
+query filter : 검색 조건을 좁히거나 정렬을 위해 이용
+
+executer : SQL을 실행하고 결과를 취득하기 위해 이용
+```
+User.query
+    .filter_by(id=2, username="admin") # query filter
+    .all() # executer
+```
+### executer를 사용한 SELECT하기
+모든 데이터 가져오기
+```
+from apps.app import db
+from apps.crud.models import User
+
+@crud.route("/sql")
+def sql():
+    db.session.query(User).all()
+    return "콘솔 로그를 확인해 주세요"
