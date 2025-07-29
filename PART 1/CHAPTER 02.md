@@ -243,3 +243,24 @@ from apps.crud.models import User
 def sql():
     db.session.query(User).all()
     return "콘솔 로그를 확인해 주세요"
+```
+레코드 1건 가져오기
+```
+db.session.query(User).first()
+```
+2건 가져오기
+```
+db.session.query(User).get(2)
+```
+레코드 개수 가져오기
+```
+db.session.query(User).count()
+```
+페이지네이션 객체 가져오기
+```
+paginate(page=None, per_page=None, error_out=Ture, max_per_page=None)
+```
+한 페이지에 10건 표시하고 두번쨰 페이지 표시하기
+```
+db.session.query(User).paginate(2, 10, False)
+```
