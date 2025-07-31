@@ -408,42 +408,43 @@ return render_template("crud/create.html", form=form)
 ```
 ## 신규 작성 화면의 템플릿 만들기 (apps/crud/templates/crud/create.html)
 ```
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>사용자 신규 작성 </title>
+    <title>사용자 신규 작성</title>
   </head>
-‹body>
-  <h2> 사용자 신규 작성</h2>
-  <form
-    action="{f url_for ('crud. create_user') }}"
-    method="POST"
-    novalidate="novalidate"
-  >
-      {{form. csrf_token }}
+  <body>
+    <h2>사용자 신규 작성</h2>
+    <form action="{{ url_for('crud.create_user') }}" method="POST" novalidate="novalidate">
+      {{ form.csrf_token }}
+
       <p>
-        {{ form.username. label J} {{ form. username (placeholder="사용자명") }}
+        {{ form.username.label }} {{ form.username(placeholder="사용자명") }}
       </p>
       {% for error in form.username.errors %}
-      <span style="color: red;">{{ error }}</span>
+        <span style="color: red;">{{ error }}</span>
       {% endfor %}
+
       <p>
-        {{form. email. label f} ff form. email (placeholder="메일 주소") }}
+        {{ form.email.label }} {{ form.email(placeholder="메일 주소") }}
       </p>
       {% for error in form.email.errors %}
-      <span style="color: red;">{{ error }}</span>
+        <span style="color: red;">{{ error }}</span>
       {% endfor %}
+
       <p>
-        {{ form-password. label }}{{ form-password(placeholder="비밀번호")}}
+        {{ form.password.label }} {{ form.password(placeholder="비밀번호") }}
       </p>
       {% for error in form.password.errors %}
-      <span style="color: red;">{{ error }</span>
+        <span style="color: red;">{{ error }}</span>
       {% endfor %}
-      <p>{{form.submit()}}</p>
+
+      <p>{{ form.submit() }}</p>
     </form>
   </body>
 </html>
+
 ```
 ## 사용자 일람 표시하기
 ### 엔드포인트 만들기(apps/crud/views.py)
