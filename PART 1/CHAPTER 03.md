@@ -260,26 +260,39 @@ login.html
 ```
 {% extends "auth/base.html" %}
 {% block title %}로그인{% endblock %}
+
 {% block content %}
 <h2>로그인</h2>
 <form action="{{ url_for('auth.login') }}"
-    method="post"
-    novalidate="novalidate"
->
-  {% for message in get_flashed_messages) %}
-  <p style="color: red;"›{{ message }}</p>
-  {% endfor %s ff form.csrf_token }}
-  <p>{{ form.email. label }} {{ form.email(placeholder="메일주소") }}</р>
+      method="post"
+      novalidate="novalidate">
+  
+  {% for message in get_flashed_messages() %}
+    <p style="color: red;">{{ message }}</p>
+  {% endfor %}
+
+  {{ form.csrf_token }}
+
+  <p>
+    {{ form.email.label }}
+    {{ form.email(placeholder="메일주소") }}
+  </p>
   {% for error in form.email.errors %}
-  <span style="color: red;">{{ error }}</span>
+    <span style="color: red;">{{ error }}</span>
   {% endfor %}
-  <p>{ form.password. label }} {{ form. password (placeholder="비밀번호") }}</p>
+
+  <p>
+    {{ form.password.label }}
+    {{ form.password(placeholder="비밀번호") }}
+  </p>
   {% for error in form.password.errors %}
-  ‹span style="color: red;">{{ error }}</span>
+    <span style="color: red;">{{ error }}</span>
   {% endfor %}
-  <p>{ form. submit() }}</p›
-</ form>
+
+  <p>{{ form.submit() }}</p>
+</form>
 {% endblock %}
+
 ```
 
 ## 로그아웃 엔드포인트(auth/views.py)
