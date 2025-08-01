@@ -239,21 +239,21 @@ views.py
 from apps.app import db
 from apps.auth.forms import SignUpForm, LoginForm
 
-@auth. route("/login™, methods=["GET", "POST"])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
-    form = LoginForm)
-    if form. validate _on_submit):
+    form = LoginForm()
+    if form.validate_on_submit():
         # 이메일 주소로 데이터베이스에 사용자가 있는지 검사한다
         user = User.query.filter_by(email=form.email.data).first()
 
         # 사용자가 존재하고 비밀번호가 일치하면 로그인을 허가한다
         if user is not None and user.verify_password(form.password.data):
-            login_user (user)
-            return redirect (url_for ("crud.users"))
+            login_user(user)
+            return redirect(url_for("crud.users"))
 
         # 로그인 실패 메시지를 설정한다
         flash("메일 주소 또는 비밀번호가 일치하지 않습니다.")
-  return render_template("auth/login.html", form=form)
+    return render_template("auth/login.html", form=form)
 ```
 ## 로그인 템플릿
 login.html
