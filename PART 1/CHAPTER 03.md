@@ -282,3 +282,33 @@ login.html
 {% endblock %}
 ```
 
+## 로그아웃 엔드포인트(auth/views.py)
+```
+from flask_login import login_user, logout_user
+@auth.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("auth.login"))
+```
+## 공통 템플릿 갱신(base.html)
+```
+<!DOCTYPE html >
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <div>
+        {% if current_user.is_authenticated %}
+        <p>
+            <span>{{current_user.username}}</span>
+            <span><a href="{{url_for('auth.logout')}"}></span>
+
+        </p>
+        {%endif%}
+    </div>
+    {% block content %}{% endblock %}
+  </body>
+</html>
+```
